@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block center %}
+  <h2>Lista de Alunos</h2>
+  <form method="GET">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="nome" name="nome" />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="" class="form-label">Artista</label>
+          <select class="form-control" id="artista" name="artista">
+            <option value="">Qualquer Artista</option>
+            <!-- Opções de artistas aqui -->
+            {% for artista in artistas %}
+              <option value="{{ artista }}">{{ artista }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary mb-3">Filtrar</button>
+    </div>
+  </form>
+
+  <a href="{% url 'create_disco' %}" class="btn btn-success mb-3">Novo Cadastro</a>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Artista</th>
+        <th>Ano</th>
+        <th>Gravadora</th>
+        <th>Unidades</th>
+        <th>Cidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in discos %}
+        <tr>
+          <td>{{ obj.nome }}</td>
+          <td>
+            {% for artista in obj.artistas.all %}
+              {% if not forloop.last %}
+                {{ artista }},
+              {% else %}
+                {{ artista }}
+              {% endif %}
+            {% endfor %}
+          </td>
+
+          <td>{{ obj.ano }}</td>
+
+          <td>{{ obj.selo_fonografico }}</td>
+
+          <td>{{ obj.quantidade }}</td>
+
+          <td>
+            <a href="{% url 'edit_disco' obj.pk %}" class="btn btn-primary btn-sm">Editar</a>
+            <a href="{% url 'delete_disco' obj.pk %}" class="btn btn-danger btn-sm">Remover</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if pagina_atual != '1' %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{pagina_anterior}}">Anterior</a>
+        </li>
+      {% endif %}
+      {% for pagina in lista_paginas %}
+        <li class="page-item">
+          <a class="page-link" href="#">{{pagina}}</a>
+        </li>
+      {% endfor %}
+      {% if has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{proxima_pagina}}">Próxima</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endblock %}
